@@ -131,6 +131,26 @@ struct OutboundHTLCOutput {
 	source: HTLCSource,
 }
 
+enum DLCState {
+	LocalOffered,
+	RemoteOffered,
+	LocalAccepted,
+	RemoteAccepted,
+	LocalSigned,
+	RemoteSigned,
+	RemoteCommitted,
+	Fulfilled(u64),
+}
+
+struct DLCOutput {
+	event_id: u64,
+	amount_local_msat: u64,
+	amount_remote_msat: u64,
+	contract_maturity: u32,
+	contract_refund_time: u32,
+	state: DLCState,
+}
+
 /// See AwaitingRemoteRevoke ChannelState for more info
 enum HTLCUpdateAwaitingACK {
 	AddHTLC { // TODO: Time out if we're getting close to cltv_expiry
@@ -258,6 +278,7 @@ pub(super) struct Channel<ChanSigner: ChannelKeys> {
 	value_to_self_msat: u64, // Excluding all pending_htlcs, excluding fees
 	pending_inbound_htlcs: Vec<InboundHTLCOutput>,
 	pending_outbound_htlcs: Vec<OutboundHTLCOutput>,
+	pending_dlc_outputs: Vec<DLCOutput>,
 	holding_cell_htlc_updates: Vec<HTLCUpdateAwaitingACK>,
 
 	/// When resending CS/RAA messages on channel monitor restoration or on reconnect, we always
@@ -2534,6 +2555,8 @@ impl<ChanSigner: ChannelKeys> Channel<ChanSigner> {
 		let mut update_fulfill_htlcs = Vec::new();
 		let mut update_fail_htlcs = Vec::new();
 		let mut update_fail_malformed_htlcs = Vec::new();
+		let mut update_add_dlcs = Vec::new();
+		let mut update_fulfill_dlcs = Vec::new();
 
 		for htlc in self.pending_outbound_htlcs.iter() {
 			if let &OutboundHTLCState::LocalAnnounced(ref onion_packet) = &htlc.state {
@@ -2574,6 +2597,22 @@ impl<ChanSigner: ChannelKeys> Channel<ChanSigner> {
 						});
 					},
 				}
+			}
+		}
+
+		for dlc in self.pending_dlc_outputs.iter() {
+			match dlc.state {
+				&DLCState::RemoteSigned | &DLCState::RemoteCommitted => {
+					update_add_dlcs.push(???);
+				}
+				&DLCState::Fulfilled(oracle_sig) => {
+					update_fulfill_dlcs.push(msgs:: UpdateFulfillDLC {
+						channel_id: self.channel_id(),
+						event_id: dlc.event_id,
+						oracle_sig
+					});
+				}
+				_ => ()
 			}
 		}
 

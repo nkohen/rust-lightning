@@ -40,6 +40,10 @@ pub enum Message {
 	UpdateFailMalformedHTLC(msgs::UpdateFailMalformedHTLC),
 	CommitmentSigned(msgs::CommitmentSigned),
 	RevokeAndACK(msgs::RevokeAndACK),
+	UpdateOfferDLC(msgs::UpdateOfferDLC),
+	UpdateAcceptDLC(msgs::UpdateAcceptDLC),
+	UpdateSignDLC(msgs::UpdateSignDLC),
+	UpdateFulfillDLC(msgs::UpdateFulfillDLC),
 	UpdateFee(msgs::UpdateFee),
 	ChannelReestablish(msgs::ChannelReestablish),
 	AnnouncementSignatures(msgs::AnnouncementSignatures),
@@ -75,6 +79,10 @@ impl Message {
 			&Message::UpdateFailMalformedHTLC(ref msg) => msg.type_id(),
 			&Message::CommitmentSigned(ref msg) => msg.type_id(),
 			&Message::RevokeAndACK(ref msg) => msg.type_id(),
+			&Message::UpdateOfferDLC(ref msg) => msg.type_id(),
+			&Message::UpdateAcceptDLC(ref msg) => msg.type_id(),
+			&Message::UpdateSignDLC(ref msg) => msg.type_id(),
+			&Message::UpdateFulfillDLC(ref msg) => msg.type_id(),
 			&Message::UpdateFee(ref msg) => msg.type_id(),
 			&Message::ChannelReestablish(ref msg) => msg.type_id(),
 			&Message::AnnouncementSignatures(ref msg) => msg.type_id(),
@@ -158,6 +166,18 @@ pub fn read<R: ::std::io::Read>(buffer: &mut R) -> Result<Message, msgs::DecodeE
 		},
 		msgs::RevokeAndACK::TYPE => {
 			Ok(Message::RevokeAndACK(Readable::read(buffer)?))
+		},
+		msgs::UpdateOfferDLC::TYPE => {
+			Ok(Message::UpdateOfferDLC(Readable::read(buffer)?))
+		},
+		msgs::UpdateAcceptDLC::TYPE => {
+			Ok(Message::UpdateAcceptDLC(Readable::read(buffer)?))
+		},
+		msgs::UpdateSignDLC::TYPE => {
+			Ok(Message::UpdateSignDLC(Readable::read(buffer)?))
+		},
+		msgs::UpdateFulfillDLC::TYPE => {
+			Ok(Message::UpdateFulfillDLC(Readable::read(buffer)?))
 		},
 		msgs::UpdateFee::TYPE => {
 			Ok(Message::UpdateFee(Readable::read(buffer)?))
@@ -277,6 +297,22 @@ impl Encode for msgs::CommitmentSigned {
 
 impl Encode for msgs::RevokeAndACK {
 	const TYPE: u16 = 133;
+}
+
+impl Encode for msgs::UpdateOfferDLC {
+	const TYPE: u16 = ?;
+}
+
+impl Encode for msgs::UpdateAcceptDLC {
+	const TYPE: u16 = ?;
+}
+
+impl Encode for msgs::UpdateSignDLC {
+	const TYPE: u16 = ?;
+}
+
+impl Encode for msgs::UpdateFulfillDLC {
+	const TYPE: u16 = ?;
 }
 
 impl Encode for msgs::UpdateFee {

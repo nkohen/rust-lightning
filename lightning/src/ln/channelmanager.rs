@@ -2703,6 +2703,22 @@ impl<ChanSigner: ChannelKeys, M: Deref, T: Deref, K: Deref, F: Deref> ChannelMan
 		Ok(())
 	}
 
+	fn internal_update_offer_dlc(&self, their_node_id: &PublicKey, msg: &msgs::UpdateOfferDLC) -> Result<(), MsgHandleErrInternal> {
+		Ok(())
+	}
+	
+	fn internal_update_accept_dlc(&self, their_node_id: &PublicKey, msg: &msgs::UpdateAcceptDLC) -> Result<(), MsgHandleErrInternal> {
+		Ok(())
+	}
+
+	fn internal_update_sign_dlc(&self, their_node_id: &PublicKey, msg: &msgs::UpdateSignDLC) -> Result<(), MsgHandleErrInternal> {
+		Ok(())
+	}
+
+	fn internal_update_fulfill_dlc(&self, their_node_id: &PublicKey, msg: &msgs::UpdateFulfillDLC) -> Result<(), MsgHandleErrInternal> {
+		Ok(())
+	}
+
 	fn internal_update_fee(&self, their_node_id: &PublicKey, msg: &msgs::UpdateFee) -> Result<(), MsgHandleErrInternal> {
 		let mut channel_lock = self.channel_state.lock().unwrap();
 		let channel_state = &mut *channel_lock;
@@ -3183,6 +3199,26 @@ impl<ChanSigner: ChannelKeys, M: Deref + Sync + Send, T: Deref + Sync + Send, K:
 	fn handle_revoke_and_ack(&self, their_node_id: &PublicKey, msg: &msgs::RevokeAndACK) {
 		let _ = self.total_consistency_lock.read().unwrap();
 		let _ = handle_error!(self, self.internal_revoke_and_ack(their_node_id, msg), *their_node_id);
+	}
+
+	fn handle_update_offer_dlc(&self, their_node_id: &PublicKey, msg: &msgs::UpdateOfferDLC) {
+		let _ = self.total_consistency_lock.read().unwrap();
+		let _ = handle_error!(self, self.internal_update_offer_dlc(their_node_id, msg), *their_node_id);
+	}
+
+	fn handle_update_accept_dlc(&self, their_node_id: &PublicKey, msg: &msgs::UpdateAcceptDLC) {
+		let _ = self.total_consistency_lock.read().unwrap();
+		let _ = handle_error!(self, self.internal_update_accept_dlc(their_node_id, msg), *their_node_id);
+	}
+
+	fn handle_update_sign_dlc(&self, their_node_id: &PublicKey, msg: &msgs::UpdateSignDLC) {
+		let _ = self.total_consistency_lock.read().unwrap();
+		let _ = handle_error!(self, self.internal_update_sign_dlc(their_node_id, msg), *their_node_id);
+	}
+
+	fn handle_update_fulfill_dlc(&self, their_node_id: &PublicKey, msg: &msgs::UpdateFulfillDLC) {
+		let _ = self.total_consistency_lock.read().unwrap();
+		let _ = handle_error!(self, self.internal_update_fulfill_dlc(their_node_id, msg), *their_node_id);
 	}
 
 	fn handle_update_fee(&self, their_node_id: &PublicKey, msg: &msgs::UpdateFee) {

@@ -525,6 +525,10 @@ mod tests {
 		fn handle_update_fail_malformed_htlc(&self, _their_node_id: &PublicKey, _msg: &UpdateFailMalformedHTLC) {}
 		fn handle_commitment_signed(&self, _their_node_id: &PublicKey, _msg: &CommitmentSigned) {}
 		fn handle_revoke_and_ack(&self, _their_node_id: &PublicKey, _msg: &RevokeAndACK) {}
+		fn handle_update_offer_dlc(&self, _their_node_id: &PublicKey, _msg: &UpdateOfferDLC) {}
+		fn handle_update_accept_dlc(&self, _their_node_id: &PublicKey, _msg: &UpdateAcceptDLC) {}
+		fn handle_update_sign_dlc(&self, _their_node_id: &PublicKey, _msg: &UpdateSignDLC) {}
+		fn handle_update_fulfill_dlc(&self, _their_node_id: &PublicKey, _msg: &UpdateFulfillDLC) {}
 		fn handle_update_fee(&self, _their_node_id: &PublicKey, _msg: &UpdateFee) {}
 		fn handle_announcement_signatures(&self, _their_node_id: &PublicKey, _msg: &AnnouncementSignatures) {}
 		fn peer_disconnected(&self, their_node_id: &PublicKey, _no_connection_possible: bool) {

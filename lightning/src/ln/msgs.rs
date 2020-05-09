@@ -200,6 +200,55 @@ pub struct UpdateFailMalformedHTLC {
 	pub(crate) failure_code: u16,
 }
 
+/// An update_offer_dlc message to be sent or received from a peer
+#[derive(Clone, PartialEq)]
+pub struct UpdateOfferDLC {
+	pub(crate) channel_id: [u8; 32],
+	pub(crate) event_id: u64,
+	pub(crate) funding_key: PublicKey,
+	pub(crate) to_local_cet_key: PublicKey,
+	pub(crate) final_key: PublicKey,
+	pub(crate) change_key: PublicKey,
+	pub(crate) msg_hash_local: u64,
+	pub(crate) msg_hash_remote: u64,
+	pub(crate) amount_msat_local: u64,
+	pub(crate) amount_msat_remote: u64,
+	pub(crate) oracle_pubkey: PublicKey,
+	pub(crate) oracle_r: PublicKey,
+	pub(crate) contract_maturity: u32,
+	pub(crate) contract_refund_time: u32,
+}
+
+/// An update_accept_dlc message to be sent or received from a peer
+#[derive(Clone, PartialEq)]
+pub struct UpdateAcceptDLC {
+	pub(crate) channel_id: [u8; 32],
+	pub(crate) event_id: u64,
+	pub(crate) funding_key: PublicKey,
+	pub(crate) to_local_cet_key: PublicKey,
+	pub(crate) final_key: PublicKey,
+	pub(crate) change_key: PublicKey,
+	pub(crate) funding_inputs: Vec<(bitcoin::blockdata::transaction::OutPoint, bitcoin::blockdata::transaction::TxOut)>,
+	pub(crate) cet_sigs: Vec<Signature>,
+}
+
+/// An update_sign_dlc message to be sent or received from a peer
+#[derive(Clone, PartialEq)]
+pub struct UpdateSignDLC {
+	pub(crate) channel_id: [u8; 32],
+	pub(crate) event_id: u64,
+	pub(crate) cet_sigs: Vec<Signature>,
+	pub(crate) funding_sigs: Vec<Signature>,
+}
+
+/// An update_fulfill_dlc message to be sent or received from a peer
+#[derive(Clone, PartialEq)]
+pub struct UpdateFulfillDLC {
+	pub(crate) channel_id: [u8; 32],
+	pub(crate) event_id: u64,
+	pub(crate) oracle_sig: u64,
+}
+
 /// A commitment_signed message to be sent or received from a peer
 #[derive(Clone, PartialEq)]
 pub struct CommitmentSigned {
@@ -479,6 +528,9 @@ pub struct CommitmentUpdate {
 	pub update_fail_htlcs: Vec<UpdateFailHTLC>,
 	/// update_fail_malformed_htlc messages which should be sent
 	pub update_fail_malformed_htlcs: Vec<UpdateFailMalformedHTLC>,
+	// TODO: Add stuff for dlc offer/accept/sign
+	/// update_fulfill_dlc messages which should be sent
+	pub update_fulfill_dlcs: Vec<UpdateFulfillDLC>,
 	/// An update_fee message which should be sent
 	pub update_fee: Option<UpdateFee>,
 	/// Finally, the commitment_signed message which should be sent
@@ -562,6 +614,16 @@ pub trait ChannelMessageHandler : events::MessageSendEventsProvider + Send + Syn
 	fn handle_commitment_signed(&self, their_node_id: &PublicKey, msg: &CommitmentSigned);
 	/// Handle an incoming revoke_and_ack message from the given peer.
 	fn handle_revoke_and_ack(&self, their_node_id: &PublicKey, msg: &RevokeAndACK);
+
+	// DLC handling:
+	/// Handle an incoming update_offer_dlc message from the given peer.
+	fn handle_update_offer_dlc(&self, their_node_id: &PublicKey, msg: &UpdateOfferDLC);
+	/// Handle an incoming update_accept_dlc message from the given peer.
+	fn handle_update_accept_dlc(&self, their_node_id: &PublicKey, msg: &UpdateAcceptDLC);
+	/// Handle an incoming update_sign_dlc message from the given peer.
+	fn handle_update_sign_dlc(&self, their_node_id: &PublicKey, msg: &UpdateSignDLC);
+	/// Handle an incoming update_fulfill_dlc message from the given peer.
+	fn handle_update_fulfill_dlc(&self, their_node_id: &PublicKey, msg: &UpdateFulfillDLC);
 
 	/// Handle an incoming update_fee message from the given peer.
 	fn handle_update_fee(&self, their_node_id: &PublicKey, msg: &UpdateFee);
