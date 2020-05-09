@@ -155,7 +155,6 @@ impl msgs::ChannelMessageHandler for TestChannelMessageHandler {
 	fn handle_revoke_and_ack(&self, _their_node_id: &PublicKey, _msg: &msgs::RevokeAndACK) {}
 	fn handle_update_offer_dlc(&self, _their_node_id: &PublicKey, _msg: &msgs::UpdateOfferDLC) {}
 	fn handle_update_accept_dlc(&self, _their_node_id: &PublicKey, _msg: &msgs::UpdateAcceptDLC) {}
-	fn handle_update_sign_dlc(&self, _their_node_id: &PublicKey, _msg: &msgs::UpdateSignDLC) {}
 	fn handle_update_fulfill_dlc(&self, _their_node_id: &PublicKey, _msg: &msgs::UpdateFulfillDLC) {}
 	fn handle_update_fee(&self, _their_node_id: &PublicKey, _msg: &msgs::UpdateFee) {}
 	fn handle_announcement_signatures(&self, _their_node_id: &PublicKey, _msg: &msgs::AnnouncementSignatures) {}

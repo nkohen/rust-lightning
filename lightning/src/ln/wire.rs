@@ -42,7 +42,6 @@ pub enum Message {
 	RevokeAndACK(msgs::RevokeAndACK),
 	UpdateOfferDLC(msgs::UpdateOfferDLC),
 	UpdateAcceptDLC(msgs::UpdateAcceptDLC),
-	UpdateSignDLC(msgs::UpdateSignDLC),
 	UpdateFulfillDLC(msgs::UpdateFulfillDLC),
 	UpdateFee(msgs::UpdateFee),
 	ChannelReestablish(msgs::ChannelReestablish),
@@ -81,7 +80,6 @@ impl Message {
 			&Message::RevokeAndACK(ref msg) => msg.type_id(),
 			&Message::UpdateOfferDLC(ref msg) => msg.type_id(),
 			&Message::UpdateAcceptDLC(ref msg) => msg.type_id(),
-			&Message::UpdateSignDLC(ref msg) => msg.type_id(),
 			&Message::UpdateFulfillDLC(ref msg) => msg.type_id(),
 			&Message::UpdateFee(ref msg) => msg.type_id(),
 			&Message::ChannelReestablish(ref msg) => msg.type_id(),
@@ -172,9 +170,6 @@ pub fn read<R: ::std::io::Read>(buffer: &mut R) -> Result<Message, msgs::DecodeE
 		},
 		msgs::UpdateAcceptDLC::TYPE => {
 			Ok(Message::UpdateAcceptDLC(Readable::read(buffer)?))
-		},
-		msgs::UpdateSignDLC::TYPE => {
-			Ok(Message::UpdateSignDLC(Readable::read(buffer)?))
 		},
 		msgs::UpdateFulfillDLC::TYPE => {
 			Ok(Message::UpdateFulfillDLC(Readable::read(buffer)?))
@@ -304,10 +299,6 @@ impl Encode for msgs::UpdateOfferDLC {
 }
 
 impl Encode for msgs::UpdateAcceptDLC {
-	const TYPE: u16 = ?;
-}
-
-impl Encode for msgs::UpdateSignDLC {
 	const TYPE: u16 = ?;
 }
 

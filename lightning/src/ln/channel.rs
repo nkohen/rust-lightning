@@ -136,9 +136,8 @@ enum DLCState {
 	RemoteOffered,
 	LocalAccepted,
 	RemoteAccepted,
-	LocalSigned,
-	RemoteSigned,
 	RemoteCommitted,
+	BothCommitted,
 	Fulfilled(u64),
 }
 
@@ -2602,7 +2601,7 @@ impl<ChanSigner: ChannelKeys> Channel<ChanSigner> {
 
 		for dlc in self.pending_dlc_outputs.iter() {
 			match dlc.state {
-				&DLCState::RemoteSigned | &DLCState::RemoteCommitted => {
+				&DLCState::RemoteAccepted | &DLCState::RemoteCommitted => {
 					update_add_dlcs.push(???);
 				}
 				&DLCState::Fulfilled(oracle_sig) => {

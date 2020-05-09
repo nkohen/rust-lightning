@@ -205,10 +205,8 @@ pub struct UpdateFailMalformedHTLC {
 pub struct UpdateOfferDLC {
 	pub(crate) channel_id: [u8; 32],
 	pub(crate) event_id: u64,
-	pub(crate) funding_key: PublicKey,
 	pub(crate) to_local_cet_key: PublicKey,
-	pub(crate) final_key: PublicKey,
-	pub(crate) change_key: PublicKey,
+	pub(crate) to_remote_cet_key: PublicKey,
 	pub(crate) msg_hash_local: u64,
 	pub(crate) msg_hash_remote: u64,
 	pub(crate) amount_msat_local: u64,
@@ -224,21 +222,9 @@ pub struct UpdateOfferDLC {
 pub struct UpdateAcceptDLC {
 	pub(crate) channel_id: [u8; 32],
 	pub(crate) event_id: u64,
-	pub(crate) funding_key: PublicKey,
 	pub(crate) to_local_cet_key: PublicKey,
-	pub(crate) final_key: PublicKey,
-	pub(crate) change_key: PublicKey,
-	pub(crate) funding_inputs: Vec<(bitcoin::blockdata::transaction::OutPoint, bitcoin::blockdata::transaction::TxOut)>,
+	pub(crate) to_remote_cet_key: PublicKey,
 	pub(crate) cet_sigs: Vec<Signature>,
-}
-
-/// An update_sign_dlc message to be sent or received from a peer
-#[derive(Clone, PartialEq)]
-pub struct UpdateSignDLC {
-	pub(crate) channel_id: [u8; 32],
-	pub(crate) event_id: u64,
-	pub(crate) cet_sigs: Vec<Signature>,
-	pub(crate) funding_sigs: Vec<Signature>,
 }
 
 /// An update_fulfill_dlc message to be sent or received from a peer
@@ -620,8 +606,6 @@ pub trait ChannelMessageHandler : events::MessageSendEventsProvider + Send + Syn
 	fn handle_update_offer_dlc(&self, their_node_id: &PublicKey, msg: &UpdateOfferDLC);
 	/// Handle an incoming update_accept_dlc message from the given peer.
 	fn handle_update_accept_dlc(&self, their_node_id: &PublicKey, msg: &UpdateAcceptDLC);
-	/// Handle an incoming update_sign_dlc message from the given peer.
-	fn handle_update_sign_dlc(&self, their_node_id: &PublicKey, msg: &UpdateSignDLC);
 	/// Handle an incoming update_fulfill_dlc message from the given peer.
 	fn handle_update_fulfill_dlc(&self, their_node_id: &PublicKey, msg: &UpdateFulfillDLC);
 
