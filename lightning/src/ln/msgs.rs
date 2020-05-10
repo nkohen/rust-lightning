@@ -200,6 +200,33 @@ pub struct UpdateFailMalformedHTLC {
 	pub(crate) failure_code: u16,
 }
 
+/// An update_add_dlc message to be sent or received from a peer
+#[derive(Clone, PartialEq)]
+pub struct UpdateAddDLC {
+	pub(crate) channel_id: [u8; 32],
+	pub(crate) event_id: u64,
+	pub(crate) funding_key: PublicKey,
+	pub(crate) to_local_cet_key: PublicKey,
+	pub(crate) to_remote_cet_key: PublicKey,
+	pub(crate) cet_sigs: Vec<Signature>,
+}
+
+/// An update_countersign_dlc message to be sent or received from a peer
+#[derive(Clone, PartialEq)]
+pub struct UpdateCounterSignDLC {
+	pub(crate) channel_id: [u8; 32],
+	pub(crate) event_id: u64,
+	pub(crate) cet_sigs: Vec<Signature>
+}
+
+/// An update_fulfill_dlc message to be sent or received from a peer
+#[derive(Clone, PartialEq)]
+pub struct UpdateFulfillDLC {
+	pub(crate) channel_id: [u8; 32],
+	pub(crate) event_id: u64,
+	pub(crate) oracle_sig: u64,
+}
+
 /// A commitment_signed message to be sent or received from a peer
 #[derive(Clone, PartialEq)]
 pub struct CommitmentSigned {
@@ -479,6 +506,10 @@ pub struct CommitmentUpdate {
 	pub update_fail_htlcs: Vec<UpdateFailHTLC>,
 	/// update_fail_malformed_htlc messages which should be sent
 	pub update_fail_malformed_htlcs: Vec<UpdateFailMalformedHTLC>,
+	/// update_add_dlc messages which should be sent
+	pub update_add_dlcs: Vec<UpdateAddDLC>,
+	/// update_countersign_dlc messages which should be sent
+	pub update_countersign_dlcs: Vec<UpdateCounterSignDLC>,
 	/// An update_fee message which should be sent
 	pub update_fee: Option<UpdateFee>,
 	/// Finally, the commitment_signed message which should be sent
@@ -558,6 +589,12 @@ pub trait ChannelMessageHandler : events::MessageSendEventsProvider + Send + Syn
 	fn handle_update_fail_htlc(&self, their_node_id: &PublicKey, msg: &UpdateFailHTLC);
 	/// Handle an incoming update_fail_malformed_htlc message from the given peer.
 	fn handle_update_fail_malformed_htlc(&self, their_node_id: &PublicKey, msg: &UpdateFailMalformedHTLC);
+	/// Handle an incoming update_add_dlc message from the given peer.
+	fn handle_update_add_dlc(&self, their_node_id: &PublicKey, msg: &UpdateAddDLC);
+	/// Handle an incoming update_countersign_dlc message from the given peer.
+	fn handle_update_countersign_dlc(&self, their_node_id: &PublicKey, msg: &UpdateCounterSignDLC);
+	/// Handle an incoming update_fulfill_dlc message from the given peer.
+	fn handle_update_fulfill_dlc(&self, their_node_id: &PublicKey, msg: &UpdateFulfillDLC);
 	/// Handle an incoming commitment_signed message from the given peer.
 	fn handle_commitment_signed(&self, their_node_id: &PublicKey, msg: &CommitmentSigned);
 	/// Handle an incoming revoke_and_ack message from the given peer.
